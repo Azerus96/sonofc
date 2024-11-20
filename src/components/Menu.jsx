@@ -6,7 +6,7 @@ const Menu = ({ onStartGame }) => {
 
   const handleStartGame = () => {
     onStartGame({
-      playerCount,
+      playerCount: parseInt(playerCount),
       aiType
     });
   };
@@ -49,30 +49,57 @@ const Menu = ({ onStartGame }) => {
           color: white;
         }
 
+        h1 {
+          margin-bottom: 30px;
+          color: #ffffff;
+          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
         .menu-option {
           margin: 10px 0;
           display: flex;
           flex-direction: column;
           gap: 5px;
+          width: 300px;
+        }
+
+        label {
+          font-size: 18px;
+          margin-bottom: 5px;
         }
 
         select {
-          padding: 5px;
-          width: 200px;
+          padding: 10px;
+          font-size: 16px;
+          border-radius: 5px;
+          border: none;
+          background-color: #ffffff;
+          cursor: pointer;
+        }
+
+        select:focus {
+          outline: none;
+          box-shadow: 0 0 5px #ffffff;
         }
 
         button {
-          margin-top: 20px;
-          padding: 10px 20px;
+          margin-top: 30px;
+          padding: 15px 40px;
+          font-size: 18px;
           background-color: #006600;
           color: white;
           border: none;
           border-radius: 5px;
           cursor: pointer;
+          transition: background-color 0.3s;
         }
 
         button:hover {
           background-color: #008800;
+        }
+
+        button:active {
+          transform: scale(0.98);
         }
       `}</style>
     </div>
