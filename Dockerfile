@@ -5,9 +5,13 @@ WORKDIR /app
 # Установка craco глобально
 RUN npm install -g @craco/craco
 
-# Копирование файлов конфигурации
+# Копирование конфигурационных файлов
 COPY package*.json ./
 COPY craco.config.js ./
+COPY .eslintrc.json ./
+COPY jsconfig.json ./
+
+# Установка зависимостей
 RUN npm install
 
 # Копирование исходного кода
