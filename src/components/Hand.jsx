@@ -8,43 +8,27 @@ const Hand = ({ hand, onCardMove, isActive }) => {
     const emptySlots = maxCards - cards.length;
 
     return (
-      <div
-        className={`hand-line ${line}`}
-        style={{
-          display: 'flex',
-          gap: '4px',
-          padding: '10px',
-          backgroundColor: 'rgba(0, 0, 0, 0.3)',
-          borderRadius: '5px',
-          minHeight: '110px',
-          position: 'relative'
-        }}
-      >
-        {cards.map((card, index) => (
-          <Card
-            key={`${card.rank}${card.suit}`}
-            card={card}
-            line={line}
-            index={index}
-            onCardMove={onCardMove}
-            isPlayable={isActive}
-          />
-        ))}
-        {[...Array(emptySlots)].map((_, i) => (
-          <div
-            key={`empty-${i}`}
-            className="empty-slot"
-            style={{
-              width: '70px',
-              height: '100px',
-              border: '1px dashed rgba(255, 255, 255, 0.3)',
-              borderRadius: '5px',
-              margin: '2px'
-            }}
-          />
-        ))}
+      <div className="hand-line-container">
         <div className="line-label">
           {line.charAt(0).toUpperCase() + line.slice(1)}
+        </div>
+        <div className={`hand-line ${line}`}>
+          {cards.map((card, index) => (
+            <Card
+              key={`${card.rank}${card.suit}`}
+              card={card}
+              line={line}
+              index={index}
+              onCardMove={onCardMove}
+              isPlayable={isActive}
+            />
+          ))}
+          {[...Array(emptySlots)].map((_, i) => (
+            <div
+              key={`empty-${i}`}
+              className="empty-slot"
+            />
+          ))}
         </div>
       </div>
     );
@@ -61,37 +45,37 @@ const Hand = ({ hand, onCardMove, isActive }) => {
           display: flex;
           flex-direction: column;
           gap: 10px;
-          padding: 10px;
-          background-color: rgba(0, 0, 0, 0.2);
-          border-radius: 10px;
         }
 
-        .hand-line {
-          position: relative;
-          transition: background-color 0.3s;
-        }
-
-        .hand-line:hover {
-          background-color: rgba(0, 0, 0, 0.4);
+        .hand-line-container {
+          display: flex;
+          align-items: center;
+          gap: 10px;
         }
 
         .line-label {
-          position: absolute;
-          right: 10px;
-          top: 50%;
-          transform: translateY(-50%);
-          color: rgba(255, 255, 255, 0.7);
+          width: 60px;
+          text-align: right;
           font-size: 14px;
-          font-weight: bold;
+          color: rgba(255, 255, 255, 0.7);
+        }
+
+        .hand-line {
+          display: flex;
+          gap: 4px;
+          flex: 1;
+          padding: 10px;
+          background-color: rgba(0, 0, 0, 0.3);
+          border-radius: 5px;
+          min-height: 110px;
         }
 
         .empty-slot {
-          transition: all 0.3s;
-        }
-
-        .empty-slot:hover {
-          border-color: rgba(255, 255, 255, 0.5);
-          background-color: rgba(255, 255, 255, 0.1);
+          width: 70px;
+          height: 100px;
+          border: 1px dashed rgba(255, 255, 255, 0.3);
+          border-radius: 5px;
+          margin: 2px;
         }
       `}</style>
     </div>
