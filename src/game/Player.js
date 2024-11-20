@@ -1,3 +1,7 @@
+import { LINES, LINE_SIZES } from '../utils/constants';
+import { generateCardId } from '../utils/cards';
+import { isDeadHand } from '../utils/scoring';
+
 class Player {
   constructor(id, name, isAI = false) {
     this.id = id;
@@ -56,6 +60,30 @@ class Player {
       this.hand[LINES.MIDDLE].length === LINE_SIZES[LINES.MIDDLE] &&
       this.hand[LINES.BOTTOM].length === LINE_SIZES[LINES.BOTTOM]
     );
+  }
+
+  getHandCopy() {
+    return {
+      [LINES.TOP]: [...this.hand[LINES.TOP]],
+      [LINES.MIDDLE]: [...this.hand[LINES.MIDDLE]],
+      [LINES.BOTTOM]: [...this.hand[LINES.BOTTOM]]
+    };
+  }
+
+  setReady(ready = true) {
+    this.ready = ready;
+  }
+
+  getScore() {
+    return this.points;
+  }
+
+  addPoints(points) {
+    this.points += points;
+  }
+
+  resetPoints() {
+    this.points = 0;
   }
 }
 
