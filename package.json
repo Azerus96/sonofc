@@ -19,6 +19,7 @@
     "lodash": "^4.17.21"
   },
   "scripts": {
+    "update-imports": "node update-imports.js"
     "start": "node server.js",
     "dev": "craco start",
     "build": "craco build",
