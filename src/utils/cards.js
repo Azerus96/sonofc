@@ -1,4 +1,4 @@
-import { CARDS } from '@/utils/constants';
+import { CARDS, LINE_SIZES } from './constants';
 
 export const createDeck = () => {
   const deck = [];
@@ -22,7 +22,8 @@ export const shuffleDeck = (deck) => {
 export const compareCards = (card1, card2) => {
   const rank1 = CARDS.RANKS.indexOf(card1.rank);
   const rank2 = CARDS.RANKS.indexOf(card2.rank);
-  return rank1 - rank2;
+  if (rank1 !== rank2) return rank1 - rank2;
+  return CARDS.SUITS.indexOf(card1.suit) - CARDS.SUITS.indexOf(card2.suit);
 };
 
 export const generateCardId = (card) => {
@@ -48,14 +49,31 @@ export const createSVGCard = (card) => {
 };
 
 export const isValidCardMove = (card, sourceLine, targetLine, currentHand) => {
-  // Проверка валидности перемещения карты между линиями
   if (!card || !sourceLine || !targetLine || !currentHand) return false;
   
   const sourceCards = currentHand[sourceLine];
   const targetCards = currentHand[targetLine];
   
-  // Проверка на переполнение линии
   if (targetCards.length >= LINE_SIZES[targetLine]) return false;
   
   return true;
+};
+
+export const getCardRank = (card) => {
+  return CARDS.RANKS.indexOf(card.rank);
+};
+
+export const getCardSuit = (card) => {
+  return CARDS.SUITS.indexOf(card.suit);
+};
+
+export default {
+  createDeck,
+  shuffleDeck,
+  compareCards,
+  generateCardId,
+  createSVGCard,
+  isValidCardMove,
+  getCardRank,
+  getCardSuit
 };
