@@ -15,6 +15,14 @@ export const LINE_SIZES = {
   [LINES.BOTTOM]: 5
 };
 
+export const GAME_STATES = {
+  WAITING: 'waiting',
+  DEALING: 'dealing',
+  PLAYING: 'playing',
+  SCORING: 'scoring',
+  FANTASY: 'fantasy'
+};
+
 export const ROYALTIES = {
   BOTTOM: {
     STRAIGHT: 2,
@@ -45,16 +53,7 @@ export const ROYALTIES = {
   }
 };
 
-export const GAME_STATES = {
-  WAITING: 'waiting',
-  DEALING: 'dealing',
-  PLAYING: 'playing',
-  SCORING: 'scoring',
-  FANTASY: 'fantasy'
-};
-
 export const INITIAL_CARDS = 5;
 export const CARDS_PER_STREET = 3;
 export const TOTAL_STREETS = 5;
 export const MAX_PLAYERS = 3;
-export const FANTASY_MIN_PAIR = 'Q';
