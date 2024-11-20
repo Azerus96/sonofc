@@ -5,5 +5,19 @@ module.exports = {
     alias: {
       '@': path.resolve(__dirname, 'src')
     }
+  },
+  eslint: {
+    enable: true,
+    mode: 'extends',
+    configure: {
+      extends: ['.eslintrc.js']
+    }
+  },
+  jest: {
+    configure: {
+      moduleNameMapper: {
+        '^@/(.*)$': '<rootDir>/src/$1'
+      }
+    }
   }
 };
