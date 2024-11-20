@@ -8,10 +8,7 @@ module.exports = {
   },
   eslint: {
     enable: true,
-    mode: 'extends',
-    configure: {
-      extends: ['.eslintrc.js']
-    }
+    mode: 'file'
   },
   jest: {
     configure: {
