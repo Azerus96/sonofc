@@ -18,13 +18,19 @@
     "axios": "1.4.0",
     "lodash": "4.17.21"
   },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "7.21.11",
+    "eslint": "8.43.0",
+    "eslint-config-react-app": "7.0.1",
+    "eslint-plugin-import": "2.27.5",
+    "eslint-plugin-react": "7.32.2",
+    "eslint-plugin-react-hooks": "4.6.0"
+  },
   "scripts": {
-    "start": "node server.js",
-    "dev": "craco start",
+    "start": "craco start",
     "build": "craco build",
     "test": "craco test",
-    "update-imports": "node update-imports.js"
-        "eject": "react-scripts eject",
+    "eject": "react-scripts eject",
     "lint": "eslint src/**/*.{js,jsx}",
     "lint:fix": "eslint src/**/*.{js,jsx} --fix"
   },
@@ -46,13 +52,8 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "7.21.11",
-    "@craco/craco": "7.1.0",
-    "eslint": "8.43.0",
-    "eslint-config-react-app": "7.0.1",
-    "eslint-plugin-import": "2.27.5",
-    "eslint-plugin-react": "7.32.2",
-    "eslint-plugin-react-hooks": "4.6.0"
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
   }
 }
