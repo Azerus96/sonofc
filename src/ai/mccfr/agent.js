@@ -1,3 +1,4 @@
+import { isValidMove, getLineStrength } from '@/game/Rules';
 import Strategy from '@/ai/mccfr/strategy';
 import { LINES, LINE_SIZES } from '@/utils/constants';
 import { getHandRank } from '@/utils/scoring';
