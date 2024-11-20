@@ -1,9 +1,21 @@
 FROM node:16-alpine as builder
 
 WORKDIR /app
+
+# Установка craco глобально
+RUN npm install -g @craco/craco
+
+# Копирование файлов конфигурации
 COPY package*.json ./
+COPY craco.config.js ./
 RUN npm install
-COPY . .
+
+# Копирование исходного кода
+COPY public/ public/
+COPY src/ src/
+COPY server.js ./
+
+# Сборка приложения
 RUN npm run build
 
 FROM node:16-alpine
