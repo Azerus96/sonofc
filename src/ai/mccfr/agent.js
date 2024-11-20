@@ -12,34 +12,39 @@ class MCCFRAgent {
     this.explorationRate = 0.1;
   }
 
-  async loadProgress() {
-    try {
-      const response = await fetch(`/progress/ai-progress-${this.playerId}.json`);
-      if (response.ok) {
-        const progress = await response.json();
-        this.strategy.load(progress);
-      }
-    } catch (error) {
-      console.log('No previous progress found, starting fresh');
-    }
-  }
-
   async saveProgress() {
     try {
       const progress = this.strategy.save();
-      const response = await fetch(`/progress/ai-progress-${this.playerId}.json`, {
+      const response = await fetch(`/api/progress`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(progress)
+        body: JSON.stringify({
+          playerId: this.playerId,
+          progress: progress
+        })
       });
-      
+
       if (!response.ok) {
         throw new Error('Failed to save progress');
       }
     } catch (error) {
       console.error('Error saving progress:', error);
+    }
+  }
+
+  async loadProgress() {
+    try {
+      const response = await fetch(`/api/progress/${this.playerId}`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.progress) {
+          this.strategy.load(data.progress);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading progress:', error);
     }
   }
 
@@ -50,7 +55,6 @@ class MCCFRAgent {
 
     // Исследование vs использование
     if (Math.random() < this.explorationRate) {
-      // Случайный ход для исследования
       return actions[Math.floor(Math.random() * actions.length)];
     }
 
@@ -80,7 +84,6 @@ class MCCFRAgent {
     const actions = [];
     const lines = Object.values(LINES);
 
-    // Генерация всех возможных размещений двух карт
     for (let i = 0; i < availableCards.length; i++) {
       for (let j = 0; j < availableCards.length; j++) {
         if (i === j) continue;
@@ -92,7 +95,6 @@ class MCCFRAgent {
             if (line2 === line1 && hand[line2].length + 1 >= LINE_SIZES[line2]) continue;
             if (line2 !== line1 && hand[line2].length >= LINE_SIZES[line2]) continue;
 
-            // Проверка валидности размещения
             const tempHand = JSON.parse(JSON.stringify(hand));
             tempHand[line1].push(availableCards[i]);
             tempHand[line2].push(availableCards[j]);
@@ -115,7 +117,6 @@ class MCCFRAgent {
   }
 
   isValidPlacement(hand) {
-    // Проверка правила "верхняя линия не может быть сильнее средней, средняя не может быть сильнее нижней"
     const topStrength = this.evaluateLineStrength(hand[LINES.TOP]);
     const middleStrength = this.evaluateLineStrength(hand[LINES.MIDDLE]);
     const bottomStrength = this.evaluateLineStrength(hand[LINES.BOTTOM]);
@@ -149,6 +150,7 @@ class MCCFRAgent {
     for (let i = 0; i < this.iterations; i++) {
       await this.cfr(gameState, 1, 1);
     }
+    await this.saveProgress();
   }
 
   async cfr(gameState, reachProbability, oppReachProbability) {
@@ -157,28 +159,16 @@ class MCCFRAgent {
     const utilities = new Array(actions.length).fill(0);
     let nodeUtility = 0;
 
-    // Вычисление полезности для каждого действия
     for (let i = 0; i < actions.length; i++) {
       const newGameState = this.applyAction(gameState, actions[i]);
       utilities[i] = this.evaluateState(newGameState);
       nodeUtility += strategy[i] * utilities[i];
     }
 
-    // Обновление сожалений
     const regrets = utilities.map(u => u - nodeUtility);
     this.strategy.updateRegrets(gameState, regrets.map(r => r * oppReachProbability));
 
     return nodeUtility;
-  }
-
-  applyAction(gameState, action) {
-    const newGameState = JSON.parse(JSON.stringify(gameState));
-    action.placements.forEach(placement => {
-      newGameState.hand[placement.line].push(
-        newGameState.availableCards[placement.cardIndex]
-      );
-    });
-    return newGameState;
   }
 
   evaluateState(gameState) {
@@ -192,9 +182,9 @@ class MCCFRAgent {
 
   getLineMultiplier(line) {
     return {
-      [LINES.TOP]: 1.5,    // Больший вес для верхней линии
-      [LINES.MIDDLE]: 1.0,  // Стандартный вес для средней
-      [LINES.BOTTOM]: 0.8   // Меньший вес для нижней
+      [LINES.TOP]: 1.5,
+      [LINES.MIDDLE]: 1.0,
+      [LINES.BOTTOM]: 0.8
     }[line];
   }
 }
