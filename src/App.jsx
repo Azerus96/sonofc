@@ -1,4 +1,14 @@
-const handleStartGame = (config) => {
+import React, { useState } from 'react';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import Menu from '@/components/Menu';
+import GameBoard from '@/components/GameBoard';
+
+const App = () => {
+  const [gameStarted, setGameStarted] = useState(false);
+  const [gameConfig, setGameConfig] = useState(null);
+
+  const handleStartGame = (config) => {
     setGameConfig(config);
     setGameStarted(true);
   };
