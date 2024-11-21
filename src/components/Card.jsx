@@ -21,6 +21,7 @@ const Card = ({ card, line, index, onCardMove, isPlayable = true }) => {
   const [{ isOver }, drop] = useDrop({
     accept: 'CARD',
     drop: (item) => {
+      console.log("Dropped card:", item, "into line:", line);
       if (item.id !== cardId) {
         onCardMove(item.id, item.sourceLine, line, index);
       }
