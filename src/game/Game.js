@@ -113,6 +113,26 @@ class Game {
     console.log("Game state set to PLAYING");
   }
 
+  makeMove(playerId, cardId, targetLine) {
+    console.log(`Player ID: ${playerId} is trying to move card ${cardId} to line ${targetLine}`);
+    
+    const player = this.players[playerId];
+    const cardIndex = player.hand.findIndex(card => card.id === cardId);
+    
+    if (cardIndex === -1) {
+      console.error(`Card with ID ${cardId} not found in player ${player.name}'s hand.`);
+      return false;
+    }
+
+    const cardToMove = player.hand.splice(cardIndex, 1)[0];
+    console.log(`Moving card:`, cardToMove);
+    
+    // Добавляем карту на целевую линию
+    player.currentStreetCards.push({ card: cardToMove, line: targetLine });
+    console.log(`Card ${cardToMove.rank}${cardToMove.suit} moved to line ${targetLine} by ${player.name}`);
+    return true;
+  }
+
   dealStreetCards() {
     if (this.street >= TOTAL_STREETS) {
       console.log("All streets have been dealt. No more cards to deal.");
