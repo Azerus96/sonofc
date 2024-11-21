@@ -23,6 +23,7 @@ const Card = ({ card, line, index, onCardMove, isPlayable = true }) => {
     drop: (item) => {
       console.log("Dropped card:", item, "into line:", line);
       if (item.id !== cardId) {
+        console.log(`Moving card from line ${item.sourceLine} to ${line}`);
         onCardMove(item.id, item.sourceLine, line, index);
       }
     },
