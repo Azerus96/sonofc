@@ -44,24 +44,15 @@ const GameBoard = ({ config, onReset }) => {
     }
   };
 
-  const handleCardMove = async (cardId, sourceLine, targetLine) => {
-    if (game && gameState === GAME_STATES.PLAYING && !isDealing) {
-      const success = game.makeMove(0, cardId, targetLine);
-      if (success) {
+  const handleCardMove = async (cardId, sourceLine, targetLine, targetIndex) => {
+    console.log("Moving card:", cardId, "from:", sourceLine, "to:", targetLine);
+    const success = game.makeMove(currentPlayer.id, cardId, targetLine);
+    if (success) {
         const humanPlayer = game.players[0];
         setCurrentStreetCards(humanPlayer.currentStreetCards || []);
-        
-        if (game.canActivateFantasy(humanPlayer.hand)) {
-          setFantasyMode(true);
-          setFantasyCards(game.getFantasyCards());
-        }
-        
-        setGame({...game});
-
-        if (humanPlayer.isStreetComplete()) {
-          await handleStreetComplete();
-        }
-      }
+        console.log("Successfully moved card. Current street cards:", humanPlayer.currentStreetCards);
+    } else {
+        console.error("Card move failed.");
     }
   };
 
