@@ -33,7 +33,7 @@ const GameBoard = ({ config, onReset }) => {
         const humanPlayer = game.players[0];
         setCurrentStreetCards(humanPlayer.currentStreetCards || []);
         setCurrentPlayer(humanPlayer);
-        setGame({ ...game }); // Update game state
+        setGame({ ...game });
       } catch (error) {
         console.error('Error starting game:', error);
       } finally {
@@ -49,7 +49,7 @@ const GameBoard = ({ config, onReset }) => {
     if (success) {
       const humanPlayer = game.players[0];
       setCurrentStreetCards(humanPlayer.currentStreetCards || []);
-      setGame({ ...game }); // Update game state
+      setGame({ ...game });
       setCurrentPlayer(game.getCurrentPlayer());
     } else {
       console.error("Card move failed.");
