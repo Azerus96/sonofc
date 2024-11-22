@@ -6,7 +6,7 @@ import Card from './Card';
 import GameStatus from './GameStatus';
 import FantasyMode from './FantasyMode';
 import Game from '../game/Game';
-import { GAME_STATES, INITIAL_CARDS } from '../utils/constants';
+import { GAME_STATES, LINES } from '../utils/constants';
 
 const GameBoard = ({ config, onReset }) => {
   const [game, setGame] = useState(null);
@@ -31,11 +31,9 @@ const GameBoard = ({ config, onReset }) => {
         await game.start();
         setGameState(GAME_STATES.PLAYING);
         const humanPlayer = game.players[0];
-        if (humanPlayer.currentStreetCards) {
-          setCurrentStreetCards(humanPlayer.currentStreetCards);
-        }
+        setCurrentStreetCards(humanPlayer.currentStreetCards || []);
         setCurrentPlayer(humanPlayer);
-        setGame({...game});
+        setGame({ ...game }); // Update game state
       } catch (error) {
         console.error('Error starting game:', error);
       } finally {
@@ -45,18 +43,21 @@ const GameBoard = ({ config, onReset }) => {
   };
 
   const handleCardMove = async (cardId, sourceLine, targetLine, targetIndex) => {
-    console.log("Moving card:", cardId, "from:", sourceLine, "to:", targetLine);
-    const success = game.makeMove(currentPlayer.id, cardId, targetLine);
+    if (!currentPlayer || !game) return;
+
+    const success = game.makeMove(currentPlayer.id, cardId, targetLine, targetIndex);
     if (success) {
-        const humanPlayer = game.players[0];
-        setCurrentStreetCards(humanPlayer.currentStreetCards || []);
-        console.log("Successfully moved card. Current street cards:", humanPlayer.currentStreetCards);
+      const humanPlayer = game.players[0];
+      setCurrentStreetCards(humanPlayer.currentStreetCards || []);
+      setGame({ ...game }); // Update game state
+      setCurrentPlayer(game.getCurrentPlayer());
     } else {
-        console.error("Card move failed.");
+      console.error("Card move failed.");
     }
   };
 
   const handleStreetComplete = async () => {
+    if (!game) return;
     setIsDealing(true);
     try {
       if (game.isGameOver()) {
@@ -67,7 +68,7 @@ const GameBoard = ({ config, onReset }) => {
         await game.dealStreetCards();
         const humanPlayer = game.players[0];
         setCurrentStreetCards(humanPlayer.currentStreetCards || []);
-        setGame({...game});
+        setGame({ ...game });
         setCurrentPlayer(game.getCurrentPlayer());
       }
     } finally {
@@ -76,11 +77,11 @@ const GameBoard = ({ config, onReset }) => {
   };
 
   const handleFantasyCardSelect = async (cardId, index) => {
-    if (fantasyMode && !isDealing) {
+    if (fantasyMode && !isDealing && game) {
       const success = game.makeFantasyMove(0, cardId, index);
       if (success) {
         setFantasyCards(game.getFantasyCards());
-        setGame({...game});
+        setGame({ ...game });
 
         if (game.isFantasyComplete()) {
           setFantasyMode(false);
