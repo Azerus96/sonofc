@@ -12,7 +12,9 @@ const Hand = ({ hand, onCardMove, isActive }) => {
       accept: 'CARD',
       drop: (item, monitor) => {
         if (!isActive) return;
-        const targetIndex = monitor.getClientOffset() ? calculateTargetIndex(monitor, line, cards.length) : 0;
+        const targetIndex = monitor.getClientOffset()
+          ? calculateTargetIndex(monitor, line, cards.length)
+          : 0;
         onCardMove(item.id, item.sourceLine, line, targetIndex);
       },
       collect: (monitor) => ({
@@ -23,9 +25,9 @@ const Hand = ({ hand, onCardMove, isActive }) => {
     const calculateTargetIndex = (monitor, line, numCards) => {
       const clientOffset = monitor.getClientOffset();
       const handLineRect = document.querySelector(`.hand-line.${line}`).getBoundingClientRect();
-      if (!handLineRect) return 0;
-      const cardWidth = 70;
-      const cardMargin = 4;
+      if (!handLineRect || !clientOffset) return 0; // Check for null or undefined
+      const cardWidth = 70; // Width of a card
+      const cardMargin = 4; // Margin between cards
       const cardTotalWidth = cardWidth + cardMargin;
       const relativeX = clientOffset.x - handLineRect.left;
       return Math.min(Math.max(0, Math.floor(relativeX / cardTotalWidth)), numCards);
@@ -57,7 +59,6 @@ const Hand = ({ hand, onCardMove, isActive }) => {
       </div>
     );
   };
-
 
   return (
     <div className="hand-container">
