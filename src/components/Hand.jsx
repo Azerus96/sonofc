@@ -1,4 +1,5 @@
 import React from 'react';
+import { useDrop } from 'react-dnd';
 import Card from './Card';
 import { LINES, LINE_SIZES } from '../utils/constants';
 
@@ -7,12 +8,33 @@ const Hand = ({ hand, onCardMove, isActive }) => {
     const maxCards = LINE_SIZES[line];
     const emptySlots = maxCards - cards.length;
 
+    const [{ isOver }, drop] = useDrop({
+      accept: 'CARD',
+      drop: (item, monitor) => {
+        if (!isActive) return;
+        const targetIndex = monitor.getClientOffset() ? calculateTargetIndex(monitor, line, cards.length) : 0;
+        onCardMove(item.id, item.sourceLine, line, targetIndex);
+      },
+      collect: (monitor) => ({
+        isOver: monitor.isOver(),
+      }),
+    });
+
+    const calculateTargetIndex = (monitor, line, numCards) => {
+      const clientOffset = monitor.getClientOffset();
+      const handLineRect = document.querySelector(`.hand-line.${line}`).getBoundingClientRect();
+      if (!handLineRect) return 0;
+      const cardWidth = 70;
+      const cardMargin = 4;
+      const cardTotalWidth = cardWidth + cardMargin;
+      const relativeX = clientOffset.x - handLineRect.left;
+      return Math.min(Math.max(0, Math.floor(relativeX / cardTotalWidth)), numCards);
+    };
+
     return (
       <div className="hand-line-container">
-        <div className="line-label">
-          {line.charAt(0).toUpperCase() + line.slice(1)}
-        </div>
-        <div className={`hand-line ${line}`}>
+        <div className="line-label">{line.charAt(0).toUpperCase() + line.slice(1)}</div>
+        <div ref={drop} className={`hand-line ${line}`}>
           {cards.map((card, index) => (
             <Card
               key={`${card.rank}${card.suit}`}
@@ -21,12 +43,14 @@ const Hand = ({ hand, onCardMove, isActive }) => {
               index={index}
               onCardMove={onCardMove}
               isPlayable={isActive}
+              sourceLine={line}
             />
           ))}
           {[...Array(emptySlots)].map((_, i) => (
             <div
               key={`empty-${i}`}
               className="empty-slot"
+              ref={drop}
             />
           ))}
         </div>
@@ -34,11 +58,12 @@ const Hand = ({ hand, onCardMove, isActive }) => {
     );
   };
 
+
   return (
     <div className="hand-container">
-      {renderLine(LINES.TOP, hand[LINES.TOP])}
-      {renderLine(LINES.MIDDLE, hand[LINES.MIDDLE])}
-      {renderLine(LINES.BOTTOM, hand[LINES.BOTTOM])}
+      {renderLine(LINES.TOP, hand[LINES.TOP] || [])}
+      {renderLine(LINES.MIDDLE, hand[LINES.MIDDLE] || [])}
+      {renderLine(LINES.BOTTOM, hand[LINES.BOTTOM] || [])}
 
       <style jsx>{`
         .hand-container {
