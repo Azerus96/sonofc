@@ -95,7 +95,9 @@ const Card = ({ card, line, index, onCardMove, isPlayable = true, sourceLine }) 
           font-size: 20px;
           line-height: 1;
         }
-      `}
-
+      `}</style>
+    </div>
   );
 };
+
+export default Card;
