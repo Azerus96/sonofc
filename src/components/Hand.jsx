@@ -4,34 +4,35 @@ import Card from './Card';
 import { LINES, LINE_SIZES } from '../utils/constants';
 
 const Hand = ({ hand, onCardMove, isActive }) => {
+  // Drop area for the hand
+  const [{ isOver }, drop] = useDrop({
+    accept: 'CARD',
+    drop: (item, monitor) => {
+      if (!isActive) return;
+      const targetIndex = monitor.getClientOffset()
+        ? calculateTargetIndex(monitor, LINES.TOP, hand[LINES.TOP]?.length || 0) // Здесь определите, куда вы хотите перетаскивать
+        : 0;
+      onCardMove(item.id, item.sourceLine, LINES.TOP, targetIndex); // Указывайте целевую линию для карточки
+    },
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+    }),
+  });
+
+  const calculateTargetIndex = (monitor, line, numCards) => {
+    const clientOffset = monitor.getClientOffset();
+    const handLineRect = document.querySelector(`.hand-line.${line}`).getBoundingClientRect();
+    if (!handLineRect || !clientOffset) return 0; // Check for null or undefined
+    const cardWidth = 70; // Width of a card
+    const cardMargin = 4; // Margin between cards
+    const cardTotalWidth = cardWidth + cardMargin;
+    const relativeX = clientOffset.x - handLineRect.left;
+    return Math.min(Math.max(0, Math.floor(relativeX / cardTotalWidth)), numCards);
+  };
+
   const renderLine = (line, cards) => {
     const maxCards = LINE_SIZES[line];
     const emptySlots = maxCards - cards.length;
-
-    const [{ isOver }, drop] = useDrop({
-      accept: 'CARD',
-      drop: (item, monitor) => {
-        if (!isActive) return;
-        const targetIndex = monitor.getClientOffset()
-          ? calculateTargetIndex(monitor, line, cards.length)
-          : 0;
-        onCardMove(item.id, item.sourceLine, line, targetIndex);
-      },
-      collect: (monitor) => ({
-        isOver: monitor.isOver(),
-      }),
-    });
-
-    const calculateTargetIndex = (monitor, line, numCards) => {
-      const clientOffset = monitor.getClientOffset();
-      const handLineRect = document.querySelector(`.hand-line.${line}`).getBoundingClientRect();
-      if (!handLineRect || !clientOffset) return 0; // Check for null or undefined
-      const cardWidth = 70; // Width of a card
-      const cardMargin = 4; // Margin between cards
-      const cardTotalWidth = cardWidth + cardMargin;
-      const relativeX = clientOffset.x - handLineRect.left;
-      return Math.min(Math.max(0, Math.floor(relativeX / cardTotalWidth)), numCards);
-    };
 
     return (
       <div className="hand-line-container">
@@ -52,7 +53,6 @@ const Hand = ({ hand, onCardMove, isActive }) => {
             <div
               key={`empty-${i}`}
               className="empty-slot"
-              ref={drop}
             />
           ))}
         </div>
