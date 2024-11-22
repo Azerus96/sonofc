@@ -1,57 +1,31 @@
 import React from 'react';
-import { useDrag, useDrop } from 'react-dnd';
+import { useDrag } from 'react-dnd';
 import { generateCardId } from '../utils/cards';
 
-const Card = ({ card, line, index, onCardMove, isPlayable = true }) => {
+const Card = ({ card, line, index, onCardMove, isPlayable = true, sourceLine }) => {
   const cardId = generateCardId(card);
 
   const [{ isDragging }, drag] = useDrag({
     type: 'CARD',
-    item: { 
-      id: cardId, 
-      sourceLine: line, 
-      sourceIndex: index 
-    },
+    item: { id: cardId, sourceLine, sourceIndex: index },
     canDrag: () => isPlayable,
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
   });
 
-  const [{ isOver }, drop] = useDrop({
-    accept: 'CARD',
-    drop: (item) => {
-      console.log("Dropped card:", item, "into line:", line);
-      if (item.id !== cardId) {
-        console.log(`Moving card from line ${item.sourceLine} to ${line}`);
-        onCardMove(item.id, item.sourceLine, line, index);
-      }
-    },
-    collect: (monitor) => ({
-      isOver: monitor.isOver(),
-    }),
-  });
-
-  const getSuitColor = (suit) => {
-    return suit === 'h' || suit === 'd' ? '#ff0000' : '#000000';
-  };
+  const getSuitColor = (suit) => (suit === 'h' || suit === 'd' ? '#ff0000' : '#000000');
 
   const getSuitSymbol = (suit) => {
-    const symbols = {
-      'h': '♥',
-      'd': '♦',
-      'c': '♣',
-      's': '♠'
-    };
+    const symbols = { h: '♥', d: '♦', c: '♣', s: '♠' };
     return symbols[suit];
   };
 
   return (
     <div
-      ref={(node) => {
-        drag(drop(node));
-      }}
-      className={`card ${isDragging ? 'dragging' : ''} ${isOver ? 'drop-target' : ''} ${!isPlayable ? 'disabled' : ''}`}
+      ref={drag}
+      className={`card ${isDragging ? 'dragging' : ''} ${!isPlayable ? 'disabled' : ''}`}
+      style={{ opacity: isDragging ? 0.5 : 1, cursor: isPlayable ? 'move' : 'default' }}
     >
       <div className="card-content">
         <div className="card-corner top-left">
@@ -73,18 +47,12 @@ const Card = ({ card, line, index, onCardMove, isPlayable = true }) => {
           border-radius: 5px;
           position: relative;
           user-select: none;
-          cursor: ${isPlayable ? 'move' : 'default'};
           transition: all 0.2s ease;
         }
 
         .card.dragging {
-          opacity: 0.5;
           transform: scale(1.05);
-          box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-
-        .card.drop-target {
-          background-color: rgba(0,255,0,0.1);
+          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
         .card.disabled {
@@ -127,9 +95,7 @@ const Card = ({ card, line, index, onCardMove, isPlayable = true }) => {
           font-size: 20px;
           line-height: 1;
         }
-      `}</style>
-    </div>
+      `}
+
   );
 };
-
-export default Card;
