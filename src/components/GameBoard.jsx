@@ -71,6 +71,8 @@ const GameBoard = ({ config, onReset }) => {
         setGame({ ...game });
         setCurrentPlayer(game.getCurrentPlayer());
       }
+    } catch (error) {
+      console.error("Error completing street:", error);
     } finally {
       setIsDealing(false);
     }
@@ -120,7 +122,7 @@ const GameBoard = ({ config, onReset }) => {
     return (
       <div className="players-layout">
         <div className="ai-players">
-          {aiPlayers.map((player, index) => (
+          {aiPlayers.map((player) => (
             <div key={player.id} className="player-section ai-player">
               <h3>
                 {player.name} {player.isAI ? '(AI)' : ''}
@@ -162,7 +164,7 @@ const GameBoard = ({ config, onReset }) => {
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="game-board">
-        <GameStatus 
+        <GameStatus
           gameState={gameState}
           scores={scores}
           currentPlayer={currentPlayer}
@@ -170,14 +172,14 @@ const GameBoard = ({ config, onReset }) => {
 
         <div className="game-controls">
           {gameState === GAME_STATES.WAITING && (
-            <button 
+            <button
               onClick={startGame}
               disabled={isDealing}
             >
               {isDealing ? 'Dealing...' : 'Start Game'}
             </button>
           )}
-          <button 
+          <button
             onClick={onReset}
             className="menu-button"
           >
